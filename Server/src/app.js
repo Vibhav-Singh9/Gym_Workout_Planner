@@ -15,7 +15,7 @@ import waterRoutes from "./routes/water.routes.js";
 const app = express();
 
 app.use(cors({
-  origin: true,
+  origin: ["https://gym-workout-planner-mu.vercel.app", "http://localhost:5173"],
   credentials: true
 }));
 
