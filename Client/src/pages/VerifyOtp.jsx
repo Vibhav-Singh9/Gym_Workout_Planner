@@ -8,7 +8,7 @@ const VerifyOtp = () => {
   const navigate = useNavigate();
 
 if (!state?.emailId) {
-  navigate("/register");
+  navigate("/login");
   return null;
 }
 
@@ -27,7 +27,8 @@ if (!state?.emailId) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-6 rounded shadow w-full max-w-sm">
-        <h2 className="text-lg font-bold mb-4">Verify OTP</h2>
+        <h2 className="text-lg font-bold mb-4">Verify OTP and Login again</h2>
+        <h2 className="text-red-600 font-bold text-base">OTP Expires in 5 minutes</h2>
 
         <input
           placeholder="Enter OTP"
