@@ -1,22 +1,31 @@
 import SibApiV3Sdk from "sib-api-v3-sdk";
 
 const client = SibApiV3Sdk.ApiClient.instance;
+
+// 🔴 THIS MUST EXIST
+if (!process.env.BREVO_API_KEY) {
+  console.error("❌ BREVO_API_KEY is missing");
+}
+
 client.authentications["api-key"].apiKey = process.env.BREVO_API_KEY;
 
-const tranEmailApi = new SibApiV3Sdk.TransactionalEmailsApi();
+const emailApi = new SibApiV3Sdk.TransactionalEmailsApi();
 
-export async function sendOtpEmail(email, otp) {
-  return tranEmailApi.sendTransacEmail({
+export const sendOtpEmail = async (emailId, otp) => {
+  console.log("📧 Sending OTP email to:", emailId);
+
+  return emailApi.sendTransacEmail({
     sender: {
-      email: "your-brevo-email@gmail.com",
-      name: "Vibhav",
+      email: "js3414656@gmail.com", // IMPORTANT
+      name: "Gym Workout Planner",
     },
-    to: [{ email }],
-    subject: "Your OTP",
+    to: [{ email: emailId }],
+    subject: "Your OTP for Gym Workout Planner",
     htmlContent: `
-      <h2>OTP Verification</h2>
-      <p>Your OTP is <b>${otp}</b></p>
+      <h2>Email Verification</h2>
+      <p>Your OTP is:</p>
+      <h1>${otp}</h1>
       <p>Valid for 5 minutes</p>
     `,
   });
-}
+};
