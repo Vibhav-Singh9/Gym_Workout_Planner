@@ -22,9 +22,12 @@ const Register = () => {
     e.preventDefault();
 
     try {
-      await axios.post("/auth/register", form);
-      await axios.post("/otp/send", { emailId: form.emailId });
+
+      setLoading(true)
+      const res = await axios.post("/auth/register", form);
+      const otpres = await axios.post("/otp/send", { emailId: form.emailId });
       navigate("/verify-otp", { state: { emailId: form.emailId } });
+
     } catch (err) {
       alert(err.response?.data?.message || "Registration failed");
     } finally {
