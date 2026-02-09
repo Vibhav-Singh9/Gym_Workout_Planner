@@ -1,7 +1,7 @@
 import OTP from "../models/otp.model.js";
 import User from "../models/user.model.js";
 import { generateOtp } from "../utils/generateOtp.js";
-import { getTransporter } from "../config/mail.js";
+import { sendOtpEmail } from "../config/mail.js";
 
 export const sendOtp = async (req, res) => {
   try {
@@ -18,39 +18,31 @@ export const sendOtp = async (req, res) => {
 
     const otp = generateOtp();
 
-    await OTP.deleteMany({ emailId }); 
+    await OTP.deleteMany({ emailId });
 
     await OTP.create({
       emailId,
       otp,
-      expiresAt: new Date(Date.now() + 5 * 60 * 1000)
+      expiresAt: new Date(Date.now() + 5 * 60 * 1000),
     });
 
-    const transporter = getTransporter();
-
-    await transporter.sendMail({
-      from: `"Gym Workout Planner" <${process.env.EMAIL_USER}>`,
-      to: emailId,
-      subject: "Your OTP for Gym Workout Planner",
-      html: `
-        <h2>Email Verification</h2>
-        <p>Your OTP is:</p>
-        <h1>${otp}</h1>
-        <p>Valid for 5 minutes</p>
-      `
-    });
+    // 🔥 SEND EMAIL (API – non blocking)
+    try {
+      await sendOtpEmail(emailId, otp);
+    } catch (emailErr) {
+      console.error("EMAIL ERROR:", emailErr.message);
+    }
 
     res.status(200).json({
-      message: "OTP sent successfully to your email"
+      message: "OTP sent successfully to your email",
     });
 
   } catch (err) {
     console.log("❌ SEND OTP ERROR:", err);
     res.status(400).json({
-      error: err?.message || err || "Unknown error"
+      error: err?.message || err || "Unknown error",
     });
   }
-  
 };
 
 export const verifyOtp = async (req, res) => {
