@@ -2,12 +2,7 @@ import SibApiV3Sdk from "sib-api-v3-sdk";
 
 const client = SibApiV3Sdk.ApiClient.instance;
 
-// 🔴 THIS MUST EXIST
-if (!process.env.BREVO_API_KEY) {
-  console.error("❌ BREVO_API_KEY is missing");
-}
-
-client.authentications["api-key"].apiKey = process.env.BREVO_API_KEY;
+client.authentications["api-key"].apiKey = process.env.BREVO_PASS;
 
 const emailApi = new SibApiV3Sdk.TransactionalEmailsApi();
 
