@@ -1,22 +1,17 @@
-import SibApiV3Sdk from "sib-api-v3-sdk";
+import { Resend } from "resend";
 
-const client = SibApiV3Sdk.ApiClient.instance;
+// Initialize Resend with API key
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-client.authentications["api-key"].apiKey = process.env.BREVO_API_KEY;
-
-const emailApi = new SibApiV3Sdk.TransactionalEmailsApi();
-
+// Export function (same pattern you were using)
 export const sendOtpEmail = async (emailId, otp) => {
   console.log("📧 Sending OTP email to:", emailId);
 
-  return emailApi.sendTransacEmail({
-    sender: {
-      email: "js3414656@gmail.com", // IMPORTANT
-      name: "Gym Workout Planner",
-    },
-    to: [{ email: emailId }],
+  return resend.emails.send({
+    from: "onboarding@resend.dev", 
+    to: emailId,
     subject: "Your OTP for Gym Workout Planner",
-    htmlContent: `
+    html: `
       <h2>Email Verification</h2>
       <p>Your OTP is:</p>
       <h1>${otp}</h1>
