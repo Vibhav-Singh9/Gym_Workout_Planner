@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "../utils/axios";
+import emailjs from "@emailjs/browser";
 import { Dumbbell, ArrowRight } from "lucide-react";
 
 const Register = () => {
@@ -22,13 +23,36 @@ const Register = () => {
     e.preventDefault();
 
     try {
+      setLoading(true);
 
-      setLoading(true)
-      const res = await axios.post("/auth/register", form);
-      const otpres = await axios.post("/otp/send", { emailId: form.emailId });
-      navigate("/verify-otp", { state: { emailId: form.emailId } });
+      // 1️⃣ Register user
+      await axios.post("/auth/register", form);
+
+      // 2️⃣ Generate OTP from backend
+      const otpRes = await axios.post("/otp/send", {
+        emailId: form.emailId
+      });
+
+      const otp = otpRes.data.otp;
+
+      // 3️⃣ Send OTP via EmailJS (FRONTEND ONLY)
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        {
+          to_email: form.emailId,
+          otp: otp
+        },
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+      );
+
+      // 4️⃣ Navigate to verify OTP page
+      navigate("/verify-otp", {
+        state: { emailId: form.emailId }
+      });
 
     } catch (err) {
+      console.error(err);
       alert(err.response?.data?.message || "Registration failed");
     } finally {
       setLoading(false);
@@ -48,50 +72,32 @@ const Register = () => {
     );
   }
 
-return (
-  <div className="min-h-screen justify-center bg-gray-500 bg-gradient-to-b from-slate-300 via-slate-600 to-slate-950">
-    
-    {/* PAGE WRAPPER */}
-    <div className="max-w-md mx-auto pt-12 pb-10 flex flex-col items-center">
-      
-      {/* LOGO (NOW SAFE & VISIBLE) */}
-      <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-xl mb-6">
-        <Dumbbell className="text-white w-8 h-8" />
-      </div>
+  return (
+    <div className="min-h-screen justify-center bg-gray-500 bg-gradient-to-b from-slate-300 via-slate-600 to-slate-950">
+      <div className="max-w-md mx-auto pt-12 pb-10 flex flex-col items-center">
+        <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-xl mb-6">
+          <Dumbbell className="text-white w-8 h-8" />
+        </div>
 
-      {/* TITLE */}
-      <h1 className="text-3xl font-bold text-slate-900">
-        Create Account
-      </h1>
-      <p className="text-xl text-blue-900 font-bold mb-8 text-center">
-        Join Gym Workout Planner today
-      </p>
+        <h1 className="text-3xl font-bold text-slate-900">
+          Create Account
+        </h1>
+        <p className="text-xl text-blue-900 font-bold mb-8 text-center">
+          Join Gym Workout Planner today
+        </p>
 
-      {/* CARD */}
-      <div className="w-full bg-white rounded-3xl p-8 shadow-2xl">
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="w-full bg-white rounded-3xl p-8 shadow-2xl">
+          <form onSubmit={handleSubmit} className="space-y-6">
 
-          {/* Full Name */}
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
-              Full Name
-            </label>
             <input
               name="firstName"
               required
               placeholder="John Doe"
               value={form.firstName}
               onChange={handleChange}
-              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl
-              focus:ring-2 focus:ring-indigo-500 outline-none"
+              className="w-full px-4 py-3 bg-slate-50 border rounded-xl"
             />
-          </div>
 
-          {/* Email */}
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
-              Email Address
-            </label>
             <input
               type="email"
               name="emailId"
@@ -99,16 +105,9 @@ return (
               placeholder="john@example.com"
               value={form.emailId}
               onChange={handleChange}
-              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl
-              focus:ring-2 focus:ring-indigo-500 outline-none"
+              className="w-full px-4 py-3 bg-slate-50 border rounded-xl"
             />
-          </div>
 
-          {/* Password */}
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
-              Password
-            </label>
             <input
               type="password"
               name="password"
@@ -116,16 +115,9 @@ return (
               placeholder="••••••••"
               value={form.password}
               onChange={handleChange}
-              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl
-              focus:ring-2 focus:ring-indigo-500 outline-none"
+              className="w-full px-4 py-3 bg-slate-50 border rounded-xl"
             />
-          </div>
 
-          {/* Age */}
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
-              Age
-            </label>
             <input
               type="number"
               name="age"
@@ -133,35 +125,30 @@ return (
               placeholder="22"
               value={form.age}
               onChange={handleChange}
-              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl
-              focus:ring-2 focus:ring-indigo-500 outline-none"
+              className="w-full px-4 py-3 bg-slate-50 border rounded-xl"
             />
+
+            <button
+              type="submit"
+              className="w-full bg-indigo-600 text-white py-3 rounded-xl flex items-center justify-center gap-2"
+            >
+              Register
+              <ArrowRight className="w-5 h-5" />
+            </button>
+          </form>
+
+          <div className="mt-6 text-center">
+            <p className="text-sm text-slate-500">
+              Already have an account?{" "}
+              <Link to="/login" className="text-indigo-600 font-semibold">
+                Login
+              </Link>
+            </p>
           </div>
-
-          {/* BUTTON */}
-          <button
-            type="submit"
-            className="w-full bg-indigo-600 text-white font-semibold py-3 rounded-xl
-            hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 group"
-          >
-            Register
-            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-          </button>
-        </form>
-
-        {/* FOOTER */}
-        <div className="mt-6 text-center">
-          <p className="text-sm text-slate-500">
-            Already have an account?{" "}
-            <Link to="/login" className="text-indigo-600 font-semibold hover:underline">
-              Login
-            </Link>
-          </p>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
 };
 
 export default Register;

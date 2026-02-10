@@ -8,7 +8,7 @@ const VerifyOtp = () => {
   const navigate = useNavigate();
 
 if (!state?.emailId) {
-  navigate("/login");
+  navigate("/");
   return null;
 }
 
@@ -18,7 +18,7 @@ if (!state?.emailId) {
         emailId: state.emailId,
         otp
       });
-      navigate("/");
+      navigate("/login");
     } catch (err) {
       alert(err.response?.data?.message);
     }

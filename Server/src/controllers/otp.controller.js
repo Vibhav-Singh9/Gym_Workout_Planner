@@ -1,7 +1,6 @@
 import OTP from "../models/otp.model.js";
 import User from "../models/user.model.js";
 import { generateOtp } from "../utils/generateOtp.js";
-import { sendOtpEmail } from "../config/mail.js";
 
 export const sendOtp = async (req, res) => {
   try {
@@ -27,15 +26,12 @@ export const sendOtp = async (req, res) => {
     });
 
     // 🔥 SEND EMAIL (API – non blocking)
-    try {
-      await sendOtpEmail(emailId, otp);
-    } catch (emailErr) {
-      console.error("EMAIL ERROR:", emailErr.message);
-    }
 
-    res.status(200).json({
-      message: "OTP sent successfully to your email",
-    });
+        res.status(200).json({
+        message: "OTP generated",
+        otp // 
+      });
+
 
   } catch (err) {
     console.log("❌ SEND OTP ERROR:", err);
