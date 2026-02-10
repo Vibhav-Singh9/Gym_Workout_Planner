@@ -1,36 +1,61 @@
 # 🏋️ Gym Workout Planner – OTP Email Verification
 
-A full-stack Gym Workout Planner application with secure **email-based OTP verification** using **Brevo Transactional Email API**.  
-Built with **Node.js, Express, MongoDB**, and deployed on **Render**.
+Gym Workout Planner is a full-stack web application that allows users to register and verify their email using a secure One-Time Password (OTP) system.  
+The backend handles OTP generation and validation, while OTP emails are sent from the frontend using **EmailJS** to avoid SMTP and domain verification issues on cloud platforms.
+
+The backend is deployed on **Render** and the frontend on **Vercel**.
 
 ---
 
 ## ✨ Features
+
 - User registration with email verification
-- Secure OTP generation & validation
-- OTP expiry (5 minutes)
+- Secure OTP generation and validation
+- OTP expiry time of 5 minutes
 - Resend OTP support
-- Email delivery using Brevo API 
-- Clean backend architecture
+- Email delivery using **EmailJS**
+- Clean and modular backend architecture
+- Fully cloud-deployed application
 
 ---
 
 ## 🛠 Tech Stack
-- **Backend:** Node.js, Express
-- **Database:** MongoDB, Mongoose
-- **Email Service:** Brevo Transactional Email API
-- **Deployment:** Render, Vercel
-- **Auth Support:** OTP-based email verification
+
+**Frontend**
+- React + Vite
+- EmailJS
+- Axios
+- Deployed on Vercel
+
+**Backend**
+- Node.js
+- Express.js
+- MongoDB & Mongoose
+- Deployed on Render
+
+---
+
+## 📩 OTP Verification Flow
+
+1. User submits registration details
+2. Backend generates an OTP and stores it in the database
+3. Frontend sends the OTP email using EmailJS
+4. User enters the OTP on the verification page
+5. Backend verifies the OTP and activates the user account
 
 ---
 
 ## ⚙️ Environment Variables
 
-Create a `.env` file and add:
-
+### Backend (`/server/.env`)
 ```env
 MONGO_URI=your_mongodb_connection_string
-BREVO_API_KEY=your_brevo_api_key
+PORT=5000
+
+### Frontend (/client/.env)
+VITE_EMAILJS_SERVICE_ID=your_emailjs_service_id
+VITE_EMAILJS_TEMPLATE_ID=your_emailjs_template_id
+VITE_EMAILJS_PUBLIC_KEY=your_emailjs_public_key
 
 🚀 How to Run Locally
 
@@ -38,11 +63,3 @@ npm install
 npm run dev
 
 Server will start on: http://localhost:PORT
-
-📩 OTP Flow
-
-1. User submits email
-2. OTP is generated and stored in DB
-3. OTP email sent via Brevo API
-4. User verifies OTP
-5. Account marked as verified
