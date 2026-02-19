@@ -16,6 +16,7 @@ const Dashboard = () => {
     axios.get("/nutrition/today").then(res => setNutrition(res.data.data));
     const res = await axios.get("/workout/my-plans")
     // console.log(res.data); This is for temporary check of data 
+    
     setWorkout(res.data.data);
 
     const result = await axios.get("/progress/history")
@@ -24,7 +25,7 @@ const Dashboard = () => {
 
     const water = await axios.get("/water/today")
     setWater(water.data.data.totalWater);
-    console.log(water);
+    // console.log(water);
   };
 
   useEffect(() => { 

@@ -23,7 +23,7 @@ const Login = () => {
       const msg = err.response?.data?.message;
 
       if (msg === "Please verify your email first") {
-        // redirect to OTP verification
+        // Redirect to OTP verification
         navigate("/verify-otp", {
           state: { emailId }
         });
